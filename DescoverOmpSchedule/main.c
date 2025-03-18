@@ -8,6 +8,7 @@
 
 const double epsilon = 0.00000001;
 double parameter = 0.1;
+int chunk_size = 900;
 
 void SimpleIterationsMethod() {
     double* prevX = (double*)malloc(N * sizeof(double));
@@ -32,15 +33,13 @@ void SimpleIterationsMethod() {
 
 #pragma omp parallel shared(prevX, next_x, Ax, b, matrix_A, N, done)
     {
-#pragma omp for reduction(+:b_norm)
-        // treads create local versions of the b_norm vector, do
-        // their part of job, and sum these parts in the end.
+#pragma omp for reduction(+:b_norm) schedule(guided, chunk_size)
         for (int i = 0; i < N; i++) {
             b_norm += b[i] * b[i];
         }
 
         while (1) {
-#pragma omp for
+#pragma omp for schedule(guided, chunk_size)
             for (int i = 0; i < N; i++) {
                 Ax[i] = 0;
                 for (int j = 0; j < N; j++) {
@@ -50,12 +49,12 @@ void SimpleIterationsMethod() {
             }
 
             normAxb = 0;
-#pragma omp for reduction(+:normAxb)
+#pragma omp for reduction(+:normAxb) schedule(guided, chunk_size)
             for (int i = 0; i < N; i++) {
                 normAxb += Ax[i] * Ax[i];
             }
 
-#pragma omp for
+#pragma omp for schedule(guided, chunk_size)
             for (int i = 0; i < N; i++) {
                 Ax[i] *= parameter;
                 next_x[i] = prevX[i] - Ax[i];
@@ -89,7 +88,7 @@ void SimpleIterationsMethod() {
             }
 
 
-#pragma omp for
+#pragma omp for schedule(guided, chunk_size)
             for (int i = 0; i < N; i++) {
                 prevX[i] = next_x[i];
             }
@@ -112,7 +111,7 @@ void SimpleIterationsMethod() {
 
 int main(int argc, char *argv[]) {
     srand(100);
-    omp_set_num_threads(6);
+    omp_set_num_threads(8);
     SimpleIterationsMethod();
     return 0;
 }

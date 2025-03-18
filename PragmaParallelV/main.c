@@ -33,8 +33,6 @@ void SimpleIterationsMethod() {
 #pragma omp parallel shared(prevX, next_x, Ax, b, matrix_A, N, done)
     {
 #pragma omp for reduction(+:b_norm)
-        // treads create local versions of the b_norm vector, do
-        // their part of job, and sum these parts in the end.
         for (int i = 0; i < N; i++) {
             b_norm += b[i] * b[i];
         }

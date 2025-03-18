@@ -4,7 +4,7 @@
 #include <math.h>
 #include <time.h>
 
-const long int N = 4000;
+const long int N = 6000;
 
 double randDouble(double min, double max) {
     double range = (max - min);
