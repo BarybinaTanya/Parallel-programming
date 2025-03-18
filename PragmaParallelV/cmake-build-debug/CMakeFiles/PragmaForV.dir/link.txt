@@ -1,0 +1,1 @@
+/usr/local/bin/gcc -g CMakeFiles/PragmaForV.dir/main.c.o -o PragmaForV  -lm /usr/local/lib64/libgomp.so /lib/x86_64-linux-gnu/libpthread.a 

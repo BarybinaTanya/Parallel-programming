@@ -1,0 +1,1 @@
+/usr/local/bin/gcc -g CMakeFiles/PragmaParallelV.dir/main.c.o -o PragmaParallelV 

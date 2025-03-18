@@ -1,0 +1,3 @@
+/home/bt_06/MyProjects/ParallelPrograms/OpenMP/PragmaParallelV/cmake-build-debug/CMakeFiles/PragmaForV.dir
+/home/bt_06/MyProjects/ParallelPrograms/OpenMP/PragmaParallelV/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/bt_06/MyProjects/ParallelPrograms/OpenMP/PragmaParallelV/cmake-build-debug/CMakeFiles/rebuild_cache.dir
