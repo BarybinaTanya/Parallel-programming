@@ -16,8 +16,7 @@ void SimpleIterationsMethod() {
     double* next_x = (double*)malloc(N * sizeof(double));
     double* matrix_A = (double*)malloc(N * N * sizeof(double));
 
-    GenerateVector(b);
-    GenerateVector(prevX);
+    GenerateVector(b);    GenerateVector(prevX);
     GenerateMatrix(matrix_A);
 
     double b_norm = 0;

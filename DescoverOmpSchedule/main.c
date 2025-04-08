@@ -6,9 +6,9 @@
 
 #include "generator.h"
 
-const double epsilon = 0.00000001;
+const double epsilon = 0.000000000001;
 double parameter = 0.1;
-int chunk_size = 900;
+int chunk_size = 5000;
 
 void SimpleIterationsMethod() {
     double* prevX = (double*)malloc(N * sizeof(double));
@@ -111,7 +111,7 @@ void SimpleIterationsMethod() {
 
 int main(int argc, char *argv[]) {
     srand(100);
-    omp_set_num_threads(8);
+    omp_set_num_threads(3);
     SimpleIterationsMethod();
     return 0;
 }
