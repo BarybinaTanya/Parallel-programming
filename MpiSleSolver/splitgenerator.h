@@ -6,7 +6,7 @@
 #include <cmath>
 #include <mpi.h>
 
-const int N = 40;
+const int N = 6400;
 
 double randDouble(double min, double max) {
     double range = (max - min);
@@ -17,48 +17,47 @@ double randDouble(double min, double max) {
 void GenerateLocalMatrix(double* local_A, int local_rows, int rank, int size) {
     for (int i = 0; i < local_rows; i++) {
         int global_i = rank * local_rows + i;
-        double string_el_sum = 0.0;
+        double row_sum = 0.0;
 
         for (int j = 0; j < N; j++) {
-            if (global_i >= j) { // Fill elements under diagonal of our square matrix.
-                local_A[i * N + j] = randDouble(-10, 10);
-                int receive_process = j / local_rows;
-                if (receive_process != rank) {
-                    MPI_Send(&local_A[i * N + j], 1, MPI_DOUBLE,
-                    receive_process, global_i * N + j, MPI_COMM_WORLD);
-                } else {
-                    local_A[i * N + j] = 0.0;
-                }
-                if (global_i == j) {
-                    local_A[i * N + j] += 100;
-                }
-            }
+            if (j == global_i) continue;
+            double val = randDouble(-1, 1);
+            local_A[i * N + j] = val;
+            row_sum += fabs(val);
         }
-    }
 
-    for (int i = 0; i < local_rows; ++i) {
-        int global_i = rank * local_rows + i;
-        for (int j = global_i + 1; j < N; ++j) {
-            // we need matrix_A[j * N + i].
-            int owner_process = j / local_rows;
-            // in local matrix of the process it will be j % local_rows row.
-            // so we are searching for local_A[j % local_rows][global_i] (or local_A[(j % local_rows) * N + global_i])
-            int owner_local_index = j % local_rows;
-            if (owner_process != rank) {
-                MPI_Recv(&local_A[i * N + j], 1, MPI_DOUBLE, owner_process,
-                         j * N + global_i, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-            } else {
-                local_A[i * N + j] = local_A[owner_local_index * N + global_i];
-            }
-        }
+        local_A[i * N + global_i] = row_sum + 1.0;
     }
 }
 
-void GenerateVector(double* vector, int size) {
-    for (int i = 0; i < size; i++) {
+void GenerateVector(double* vector) {
+    for (long i = 0; i < N; i++) {
         vector[i] = randDouble(-20, 20);
     }
 }
 
+void printMatrix(double* A){
+    printf("\n");
+
+    for(unsigned int i = 0; i < N; i++) {
+        for(unsigned int j = 0; j < N; j++) {
+            printf("%lf ", A[i * N + j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+void printVector(const double* B, const char* name, int procRank, int procNum, int n){
+    for (int numProc = 0; numProc < procNum; ++numProc) {
+        if (procRank == numProc) {
+            printf("%s in rank %d:\n", name, procRank);
+            for (int i = 0; i < n; ++i) {
+                printf("%lf\n", B[i]);
+            }
+            printf("\n");
+        }
+    }
+}
 
 #endif //MPISLESOLVER_SPLITGENERATOR_H
